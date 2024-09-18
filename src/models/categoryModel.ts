@@ -15,10 +15,13 @@ const categorySchema: Schema = new Schema({
 
 // Ajout d'un champ virtuel pour lier les images
 categorySchema.virtual("images", {
-  ref: "Image", // Modèle auquel se référer (Image)
-  localField: "_id", // Clé locale
-  foreignField: "category", // Clé étrangère dans le modèle Image
+  ref: "Image", // Modèle Image auquel se référer
+  localField: "_id", // Champ dans Category
+  foreignField: "category", // Champ dans Image où la référence à Category est stockée
 });
+
+categorySchema.set("toObject", { virtuals: true });
+categorySchema.set("toJSON", { virtuals: true }); // Assurez-vous que les virtuels sont inclus dans les réponses JSON
 
 const Category = mongoose.model<ICategory>("Category", categorySchema);
 export default Category;
