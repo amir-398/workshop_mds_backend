@@ -4,6 +4,7 @@ interface ICategory extends Document {
   name: string;
   price: number;
   discount_price: number;
+  description: string;
   images: mongoose.Types.ObjectId[]; // Référence à une liste d'images
 }
 
@@ -11,6 +12,7 @@ const categorySchema: Schema = new Schema({
   name: { type: String, required: true },
   price: { type: Number, required: true },
   discount_price: { type: Number, required: true },
+  description: { type: String, required: true },
 });
 
 // Ajout d'un champ virtuel pour lier les images

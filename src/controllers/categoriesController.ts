@@ -5,7 +5,7 @@ import fs from "fs";
 import path from "path";
 const addCategory = async (req: Request, res: Response) => {
   try {
-    const { name, price, discount_price } = req.body;
+    const { name, price, discount_price, description } = req.body;
 
     if (!name || !price || !discount_price || !req.files) {
       return res.status(400).send({ message: "field required" });
@@ -15,6 +15,7 @@ const addCategory = async (req: Request, res: Response) => {
       name: req.body.name,
       price: req.body.price,
       discount_price: req.body.discount_price,
+      description: req.body.description,
     });
 
     await category.save();
@@ -80,7 +81,7 @@ const getCategory = async (req: Request, res: Response) => {
 const updateCategory = async (req: Request, res: Response) => {
   try {
     const categoryId = req.params.id;
-    const { name, price, discount_price } = req.body;
+    const { name, price, discount_price, description } = req.body;
 
     // Trouver la catégorie par ID
     const category = await Category.findById(categoryId);
@@ -92,6 +93,7 @@ const updateCategory = async (req: Request, res: Response) => {
     category.name = name || category.name;
     category.price = price || category.price;
     category.discount_price = discount_price || category.discount_price;
+    category.description = description || category.description;
 
     // Sauvegarder la catégorie mise à jour
     await category.save();
