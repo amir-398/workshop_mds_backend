@@ -9,6 +9,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const port = 3001;
 app.use("/categories", require("./routes/categoriesRoute"));
+app.use("/accessoires", require("./routes/accessoireRoute"));
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
