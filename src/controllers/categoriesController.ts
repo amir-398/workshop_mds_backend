@@ -10,6 +10,8 @@ const addCategory = async (req: Request, res: Response) => {
     if (!name || !price || !discount_price || !req.files) {
       return res.status(400).send({ message: "field required" });
     }
+    console.log(req.files);
+
     // Créer une nouvelle catégorie
     const category = new Category({
       name: req.body.name,
@@ -23,8 +25,13 @@ const addCategory = async (req: Request, res: Response) => {
     if (req.files && Array.isArray(req.files)) {
       const images = req.files as Express.Multer.File[];
       for (const file of images) {
+        const relativePath = path.relative(
+          path.join(__dirname, "../public"),
+          file.path
+        ); // Chemin relatif à partir de "public"
+
         const newImage = new Image({
-          filePath: file.path, // Chemin de l'image sur le disque
+          filePath: `/images/${path.basename(file.path)}`, // Chemin à partir de "/images/"
           category: category._id,
         });
         await newImage.save(); // Sauvegarde dans la base de données
@@ -32,11 +39,16 @@ const addCategory = async (req: Request, res: Response) => {
     } else if (req.files && req.files["images"]) {
       const images = req.files["images"] as Express.Multer.File[];
       for (const file of images) {
+        const relativePath = path.relative(
+          path.join(__dirname, "../public"),
+          file.path
+        ); // Chemin relatif à partir de "public"
+
         const newImage = new Image({
-          filePath: file.path, // Chemin de l'image sur le disque
+          filePath: `/images/${path.basename(file.path)}`, // Chemin à partir de "/images/"
           category: category._id,
         });
-        await newImage.save(); // Sauvegarde dans la base de donnée
+        await newImage.save(); // Sauvegarde dans la base de données
       }
     }
 
