@@ -17,6 +17,6 @@ router
 router.route("/").get(getAccessoires);
 
 router.route("/:id").get(getAccessoire).delete(deleteAccessoire);
-router.route("/byCategory/:id").get(getAccessoiresByCategory);
+router.route("/byCategory/:category_id").get(getAccessoiresByCategory);
 
 module.exports = router;

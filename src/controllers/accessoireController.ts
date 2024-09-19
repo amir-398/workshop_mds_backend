@@ -74,6 +74,7 @@ const getAccessoire = async (req: Request, res: Response) => {
 const getAccessoiresByCategory = async (req: Request, res: Response) => {
   try {
     const { category_id } = req.params;
+
     const accessoires = await Accessoire.find({
       category_id: category_id,
     }).populate({
