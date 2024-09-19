@@ -147,7 +147,6 @@ const deleteCategory = async (req: Request, res: Response) => {
     // Supprimer les fichiers d'images du disque
     for (const image of images) {
       const filePath = path.normalize(path.join(image.filePath));
-      console.log(filePath);
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath); // Supprime le fichier image du disque
       }

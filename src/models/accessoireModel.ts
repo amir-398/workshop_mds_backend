@@ -2,11 +2,20 @@ import { ColorAccessoireModel } from "./../types/ColorAccessoireModel";
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-let accessoireModel = new Schema({
-  category_id: Number,
+let accessoireSchema = new Schema({
+  category_id: String,
   name: String,
-  price: Number,
-  color: Array<ColorAccessoireModel>(),
+  price: String,
+  color: String,
 });
-const Accessoire = mongoose.model("Accessoire", accessoireModel);
+
+accessoireSchema.virtual("images", {
+  ref: "Image",
+  localField: "_id",
+  foreignField: "accessoire",
+});
+
+accessoireSchema.set("toObject", { virtuals: true });
+accessoireSchema.set("toJSON", { virtuals: true });
+const Accessoire = mongoose.model("Accessoire", accessoireSchema);
 export default Accessoire;
