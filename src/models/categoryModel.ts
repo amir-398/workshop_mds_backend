@@ -10,8 +10,8 @@ interface ICategory extends Document {
 
 const categorySchema: Schema = new Schema({
   name: { type: String, required: true },
-  price: { type: Number, required: true },
-  discount_price: { type: Number, required: true },
+  price: { type: String, required: true },
+  discount_price: { type: String, required: true },
   description: { type: String, required: true },
 });
 
