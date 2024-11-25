@@ -9,18 +9,89 @@ const WooCommerce = new WooCommerceRestApi({
   version: "wc/v3", // Version de l'API WooCommerce
 });
 const receiveProduct = async (req: Request, res: Response) => {
+  const {
+    name,
+    Baseconsole,
+    Coque,
+    Coque_arriere,
+    ecranIPS,
+    Boutons,
+    Pads,
+    accessoires,
+    prixFinal,
+  } = req.body;
+
   try {
-    const data = {
-      name: "Amir Quality Console",
+    const wooCommerceData = {
+      name: name,
       type: "simple",
-      regular_price: "21.99",
-      description:
-        "Console personnalisée avec des spécifications uniques. Choisissez la couleur de la coque et des boutons.",
-      short_description: "Console customisée avec des options de couleurs.",
+      regular_price: prixFinal.toString(),
+      description: "Console personnalisée avec des spécifications uniques.",
+      short_description:
+        "Console personnalisée avec des spécifications uniques.",
+      attributes: [
+        {
+          id: 1,
+          name: "Base console",
+          options: [Baseconsole],
+          position: 0, // Position dans l'affichage
+          visible: true, // Visible sur la page produit
+          variation: false, // False si ce n'est pas un attribut de variation
+        },
+        {
+          id: 2,
+          name: "Coque",
+          options: [Coque],
+          position: 1, // Position dans l'affichage
+          visible: true, // Visible sur la page produit
+          variation: false, // False si ce n'est pas un attribut de variation
+        },
+        {
+          id: 3,
+          name: "Coque arrière",
+          options: [Coque_arriere],
+          position: 2, // Position dans l'affichage
+          visible: true, // Visible sur la page produit
+          variation: false, // False si ce n'est pas un attribut de variation
+        },
+        {
+          id: 4,
+          name: "Ecran IPS rétroéclairé",
+          options: [ecranIPS],
+          position: 3, // Position dans l'affichage
+          visible: true, // Visible sur la page produit
+          variation: false, // False si ce n'est pas un attribut de variation
+        },
+        {
+          id: 5,
+          name: "Boutons",
+          options: [Boutons],
+          position: 4, // Position dans l'affichage
+          visible: true, // Visible sur la page produit
+          variation: false, // False si ce n'est pas un attribut de variation
+        },
+        {
+          id: 6,
+          name: "Pads",
+          options: [Pads],
+          position: 5, // Position dans l'affichage
+          visible: true, // Visible sur la page produit
+          variation: false, // False si ce n'est pas un attribut de variation
+        },
+        {
+          id: 8,
+          name: "Accessoires",
+          options: [accessoires.join(", ")],
+          position: 6, // Position dans l'affichage
+          visible: true, // Visible sur la page produit
+          variation: false, // False si ce n'est pas un attribut de variation
+        },
+      ],
     };
-    const response = await WooCommerce.post("products", data);
+    const response = await WooCommerce.post("products", wooCommerceData);
     res.send(response.data);
   } catch (error: any) {
+    console.log(error?.response.data);
     res.status(500).send({ error: error.response.data });
   }
 };
