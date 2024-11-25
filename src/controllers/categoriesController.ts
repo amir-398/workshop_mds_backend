@@ -7,17 +7,17 @@ const addCategory = async (req: Request, res: Response) => {
   try {
     const { name, price, discount_price, description } = req.body;
 
-    if (!name || !price || !discount_price || !req.files) {
+    if (!name || !price || !discount_price || !req.files || !description) {
       return res.status(400).send({ message: "field required" });
     }
     console.log(req.files);
 
     // Créer une nouvelle catégorie
     const category = new Category({
-      name: req.body.name,
-      price: req.body.price,
-      discount_price: req.body.discount_price,
-      description: req.body.description,
+      name: name,
+      price: price,
+      discount_price: discount_price,
+      description: description,
     });
 
     await category.save();
