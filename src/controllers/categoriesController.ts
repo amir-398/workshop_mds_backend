@@ -3,6 +3,8 @@ import { Request, Response } from "express";
 import Image from "../models/ImageModel";
 import fs from "fs";
 import path from "path";
+
+// ------------------- add category -------------------
 const addCategory = async (req: Request, res: Response) => {
   try {
     const { name, price, discount_price, description } = req.body;
@@ -59,6 +61,8 @@ const addCategory = async (req: Request, res: Response) => {
   }
 };
 
+// ------------------- get all categories -------------------
+
 const getCategories = async (req: Request, res: Response) => {
   try {
     // Récupérer toutes les catégories et remplir les images liées
@@ -74,6 +78,7 @@ const getCategories = async (req: Request, res: Response) => {
   }
 };
 
+// ------------------- get category by id -------------------
 const getCategory = async (req: Request, res: Response) => {
   try {
     const categoryId = req.params.id;
@@ -90,6 +95,7 @@ const getCategory = async (req: Request, res: Response) => {
   }
 };
 
+// ------------------- update category -------------------
 const updateCategory = async (req: Request, res: Response) => {
   try {
     const categoryId = req.params.id;
@@ -97,6 +103,7 @@ const updateCategory = async (req: Request, res: Response) => {
 
     // Trouver la catégorie par ID
     const category = await Category.findById(categoryId);
+
     if (!category) {
       return res.status(404).send({ message: "Category not found" });
     }
@@ -110,29 +117,51 @@ const updateCategory = async (req: Request, res: Response) => {
     // Sauvegarder la catégorie mise à jour
     await category.save();
 
+    // Chemin absolu du dossier public/images
+    const imageDir = path.resolve(process.cwd(), "public", "images");
+
     // Gestion des images associées à la catégorie
     if (req.files && Array.isArray(req.files)) {
       const newImages = req.files as Express.Multer.File[];
 
-      // Suppression des anciennes images (si elles doivent être remplacées)
+      // Suppression des anciennes images
       const existingImages = await Image.find({ category: categoryId });
 
-      // Supprimer les fichiers sur le disque et supprimer les documents dans MongoDB
       for (const image of existingImages) {
-        const filePath = path.join(__dirname, "../", image.filePath);
-        if (fs.existsSync(filePath)) {
-          fs.unlinkSync(filePath); // Supprime le fichier image du disque
+        const absoluteFilePath = path.join(
+          imageDir,
+          path.basename(image.filePath)
+        );
+        if (fs.existsSync(absoluteFilePath)) {
+          try {
+            fs.unlinkSync(absoluteFilePath); // Supprime le fichier du disque
+            console.log(`Deleted file: ${absoluteFilePath}`);
+          } catch (err) {
+            console.error(`Failed to delete file: ${absoluteFilePath}`, err);
+          }
+        } else {
+          console.warn(`File not found: ${absoluteFilePath}`);
         }
-        await Image.deleteOne({ _id: image._id }); // Supprimer l'image de MongoDB
+
+        // Supprimer l'image de MongoDB
+        await Image.deleteOne({ _id: image._id });
       }
 
-      // Ajouter de nouvelles images
+      // Sauvegarde des nouvelles images
       for (const file of newImages) {
+        console.log("lol");
+        const relativePath = `/images/${path.basename(file.path)}`; // Chemin relatif pour la base de données
+        const newFilePath = path.join(imageDir, path.basename(file.path)); // Chemin absolu du fichier sur le disque
+
+        // Déplacer le fichier temporaire vers le dossier public/images
+        fs.renameSync(file.path, newFilePath);
+
         const newImage = new Image({
-          filePath: file.path, // Chemin de l'image sur le disque
-          category: categoryId, // Lier l'image à la catégorie
+          filePath: relativePath,
+          category: categoryId,
         });
-        await newImage.save(); // Sauvegarder la nouvelle image dans MongoDB
+
+        await newImage.save(); // Sauvegarde dans la base de données
       }
     }
 
@@ -140,8 +169,8 @@ const updateCategory = async (req: Request, res: Response) => {
       .status(200)
       .send({ message: "Category updated successfully", category });
   } catch (error) {
-    console.error(error);
-    res.status(500).send({ message: "Error updating category" });
+    console.error("Error updating category:", error);
+    res.status(500).send({ message: "Error updating category", error });
   }
 };
 

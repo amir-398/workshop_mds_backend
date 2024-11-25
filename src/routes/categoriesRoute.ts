@@ -148,7 +148,7 @@ router.route("/").get(getCategories);
 router
   .route("/:id")
   .get(getCategory)
-  .put(updateCategory)
+  .put(upload.fields([{ name: "images", maxCount: 5 }]), updateCategory)
   .delete(deleteCategory);
 
 module.exports = router;
