@@ -5,7 +5,7 @@ import path from "path";
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     // Chemin vers le dossier public/images
-    cb(null, path.join(__dirname, "../../public/images")); // Change le chemin vers public/images
+    cb(null, path.join(__dirname, "../public/images")); // Change le chemin vers public/images
   },
   filename: function (req, file, cb) {
     // Création d'un nom de fichier unique
